@@ -28,7 +28,7 @@ For details regarding the clamping method, see repo: mir-group/surfator
 
 (5) ase_vib-gp.py
 - Script used to perform a Hessian matrix calculation within ASE using our custom GP calculator
-- Requires a structure in the form of an ASE 'traj' file (ideally an optimized transition state from a dimer calculation)
+- Requires a structure in the form of an ASE structure file (ideally an optimized transition state from a dimer calculation)
 
 (6) gp_neb.py
 - Script used to evaluate energies of NEB images using the GP energy kernel
