@@ -1,0 +1,86 @@
+This document provides descriptions of the Jupyter Notebook files and python scripts contained in the repo: mir-group/surface-restructuring
+For details regarding the surface restructuring event analysis, see DOI: 10.1021/acs.jpcc.9b04863 and 10.26434/chemrxiv.11811660
+For details regarding the GP method, see repo: mir-group/flare and DOI: 10.1038/s41524-020-0283-z
+For details regarding the clamping method, see repo: mir-group/surfator
+
+
+*** Python scripts ***
+
+(1) lmpdump.py
+- Required to import MD trajectory (LAMMPS text dump file) as pandas data structure to be used in the Notebooks
+- Load 'file' by calling: lmpdump.lmpdump(file, loadmode='all')    # Limited to loading the entire trajectory at the moment
+- The pandas data structure 'xyz' has the following attributes: xyz.finaldict[i][j][k][l]
+  i = integer frame number
+  j = 0 (header - cell dimensions) or 1 (contents of the dump)
+  k = integer index (if j = 0) or string label of the dump quantity e.g. 'x' (if j = 1)
+  l = integer atom index (starting with 0 for the first dumped atom)
+
+(2) lmpclamp.py
+- Script used for clamping (see repo: mir-group/surfator)
+
+(3) dump_parser.py
+- Script used to extract numpy arrays of positions & cell from LAMMPS text dump file of a single MD frame
+- Required for ase_neb-gp.py, gp_neb.py
+
+(4) ase_dimer-gp.py
+- Script used to perform a dimer calculation within ASE using our custom GP calculator
+- Requires candidate structures of transition state (TS) & final state (FS) in the form of LAMMPS text dump files
+
+(5) ase_vib-gp.py
+- Script used to perform a Hessian matrix calculation within ASE using our custom GP calculator
+- Requires a structure in the form of an ASE 'traj' file (ideally an optimized transition state from a dimer calculation)
+
+(6) gp_neb.py
+- Script used to evaluate energies of NEB images using the GP energy kernel
+- Requires images in the form of LAMMPS text dump files
+- Outputs the energies in gp_neb.txt
+
+
+*** Jupyter Notebook files ***
+
+- All notebooks are interactive and have an initial header listing the requirements
+
+(1) FCC_CP-sites.ipynb
+- Notebook used to generate reference sites for a slab model of a face centered cubic (FCC) close-packed (CP) surface, e.g. (111) facet
+- To be used as an input for lmpclamp.py
+
+(2) MD2NEB-clamp.ipynb
+- Notebook used for surface restructuring event analysis
+- Notebook has separate blocks for the following tasks:
+  i) Load LAMMPS trajectories: Raw & clamped (LAMMPS text dump files)
+  ii) Extrat unit cell information: From equilibrated structure (LAMMPS text data file)
+  iii) Event detection: Outputs list of event flags (event_flag.txt)
+  iv) Event clustering: Clusters event flags into distinct events (event_cluster.txt)
+  v) Event localization: Spatially localizes and separates simultaneous events (event_list.txt)
+  vi) Event classification: Automatically classifies events based on changes in layer height & coordination number (event_class.txt)
+  vii) Event statistics: Counts events in each class (event_stat.txt)
+  viii) LAMMPS NEB preparation: Generates directories for each event containing LAMMPS NEB images (./ev_***/)
+
+(3) NEB2ASE.ipynb
+- Notebook used to extract initial, transition, and final states from LAMMPS NEB trajectory
+- To be used as input for LAMMPS or ASE optimizations (e.g. relaxation, dimer)
+- Notebook has separate blocks for the following tasks:
+  i) Extract unit cell & system information: From requilibrated structure (LAMMPS text data file)
+  ii) List of events to be optimized: Selected event numbers from those generated using MD2NEB-clamp.ipynb
+  iii) Extract IS, TS, FS: Extracts extrema by scanning over the NEB energies (from gp_neb.txt or log.lammps) and outputs LAMMPS text dump files under the same event directories (./ev_***/{IS/,TS/FS/})
+
+(4) NEB2DFT.ipynb
+- Same function as NEB2ASE.ipynb but prepares POSCAR files for VASP optimizations (VTST)
+
+(5) lmpdat2poscar.ipynb
+- Notebook used to convert LAMMPS text data file to VASP POSCAR file
+
+(6) lmpdmp2poscar.ipynb
+- Notebook used to convert LAMMPS text dump file to VASP POSCAR file
+
+(7) force-validate.ipynb
+- Notebook used to extract regularly spaced frames from MD trajectory (LAMPMS text dump file) and generate VASP POSCAR files
+- To be used as VASP input for the purposes of validating the force field used in MD
+
+(8) comp-intralayer.ipynb
+- Notebook used for analysis of layer-by-layer composition from MD trajectory of a bimetallic slab model (LAMMPS text dump file)
+- Counts and outputs number of each species in each layer at every frame
+
+(9) ravg-intralayer.ipynb
+- Notebook used for analysis of layer-by-layer average bond distances from MD trajectory of a bimetallic slab model (LAMMPS text dump file)
+- Outputs average bond distance of each layer at every frame (ravg.txt)
