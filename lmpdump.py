@@ -64,7 +64,7 @@ class lmpdump():
 		xs = np.array(snap_info[5].split()).astype(float)
 		ys = np.array(snap_info[6].split()).astype(float)
 		zs = np.array(snap_info[7].split()).astype(float)
-		BE = (xs[0], xs[1], ys[0], ys[1], zs[0], zs[1])
+		BE = (xs[0], xs[1], xs[2], ys[0], ys[1], ys[2], zs[0], zs[1], zs[2])
 
 		# Get snap atom info
 		SAI = {}
